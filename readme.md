@@ -1,168 +1,128 @@
-# ⚡ ByteDrop — Instant Local File Sharing
+# ByteDrop
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/379ae206-eadb-4e97-b498-79548840c7b2" width="350"/>
-</p>
-<h1 align="center">ByteDrop</h1>
+ByteDrop is a tiny local-network file drop for moving files from your computer to nearby devices on the same Wi-Fi. Start it, open the desktop page, scan the QR code from your phone, and download the shared files directly from your machine.
 
-<p align="center">
-  <b>Drop fast. Share instantly.</b>
-</p>
+No accounts. No cloud storage. No public upload service.
 
-<p align="center">
-  <img src="https://img.shields.io/badge/build-passing-brightgreen" />
-  <img src="https://img.shields.io/badge/version-v1.0-blue" />
-  <img src="https://img.shields.io/badge/license-MIT-yellow" />
-  <img src="https://img.shields.io/badge/status-active-success" />
-</p>
+## Highlights
 
----
+- QR-powered receive page for phones and tablets
+- Drag-and-drop or file picker uploads from the desktop page
+- Live file list refresh on both sender and receiver screens
+- One-click individual downloads or batch download opening
+- Clear and delete controls for the sender
+- Hardened local file handling with safe filenames, bounded upload size, and path validation
+- Security headers for the static UI
 
-# 🚀 ByteDrop — Instant Local File Sharing
+## Requirements
 
-> ⚡ Drop fast. Share instantly. No internet. No login. No nonsense.
+- Node.js 18 or newer
+- Devices connected to the same trusted local network
 
----
+## Install
 
-## ✨ What is ByteDrop?
+Run without installing globally:
 
-ByteDrop is a lightweight file sharing tool that lets you instantly transfer files between your laptop and phone over the same WiFi.
-
-No cloud. No accounts. No waiting.
-
-Just:
-drag → drop → download 📦
-
----
-
-## 🔥 Features
-
-- ⚡ Instant file transfer over local network
-- 📱 QR code connection (no typing IP)
-- 🧠 Smart UI separation
-  - Laptop → upload + manage
-  - Phone → clean download page
-- 📥 Download All button
-- 🗑️ Clear all files
-- 🔄 Auto-refresh on phone
-- 🌙 Minimal dark UI
-- 💻 Low RAM usage
-
----
-
-
-## 📸 How it works
-
-Laptop (Server)
-    ↓
-Same WiFi Network
-    ↓
-Phone (Browser via QR)
-
----
-
-## 🚀 Installation
-
-### Option 1 (Recommended)
-```
+```bash
 npx byte-drop
 ```
----
 
-### Option 2 (Global install)
+Or install this checkout locally:
+
+```bash
+npm install
+npm start
 ```
+
+If installed globally:
+
+```bash
 npm install -g byte-drop
 byte-drop
 ```
----
 
-## ▶️ Usage
+## Usage
 
-1. Run the app:
+1. Start ByteDrop:
+
+```bash
+npm start
 ```
-byte-drop
+
+2. Open the laptop URL printed in the terminal, usually:
+
+```text
+http://192.168.x.x:3000
 ```
-2. You’ll see:
+
+3. Drop or choose files on the desktop page.
+
+4. Scan the QR code from your phone, or open:
+
+```text
+http://192.168.x.x:3000/receive
 ```
-⚡ ByteDrop Started!
 
-💻 Laptop → http://192.168.x.x:3000
-📱 Scan QR → http://192.168.x.x:3000/receive
+5. Download files on the receiving device.
 
-🚀 Open on phone to download files
+Uploaded files are stored in the local `uploads/` folder and are ignored by git.
+
+## Configuration
+
+ByteDrop uses conservative defaults, and you can tune them with environment variables:
+
+| Variable | Default | Purpose |
+| --- | ---: | --- |
+| `PORT` | `3000` | HTTP port for the local server |
+| `BYTEDROP_MAX_FILE_SIZE` | `262144000` | Maximum size per file in bytes, 250 MB by default |
+| `BYTEDROP_MAX_FILES_PER_REQUEST` | `20` | Maximum files accepted in one upload request |
+
+PowerShell example:
+
+```powershell
+$env:PORT="4000"
+$env:BYTEDROP_MAX_FILE_SIZE="104857600"
+npm start
 ```
-3. Open on phone:
-- Scan QR code
-- OR open the /receive link
 
-4. Done:
-- Upload files on laptop
-- Download on phone
+## Security Notes
 
----
+ByteDrop is designed for trusted local networks, not the public internet. Anyone on the same reachable network who can open the ByteDrop URL can view and download files while the server is running.
 
-## 📱 Mobile Experience
+This version includes:
 
-- Clean UI
-- Auto updates
-- Shows:
-  - 📂 Available files
-  - 🔵 Download button
-  - ⏳ Waiting for files
+- Generated storage names to avoid trusting user-provided filenames
+- Filename sanitization and strict route validation
+- Resolved-path checks for download and delete operations
+- Upload count and file-size limits
+- Hidden Express implementation header
+- Content Security Policy and basic browser hardening headers
+- Static file serving that denies dotfiles
 
----
+Recommended use:
 
-## 🧠 Tech Stack
+- Run it only on private networks you trust.
+- Stop the server when sharing is done.
+- Delete files from the UI when they should no longer be available.
+- Avoid exposing the port through router forwarding, tunnels, or public hosting.
 
-- Node.js
-- Express
-- Multer (file upload)
-- QRCode (device pairing)
+Run an npm dependency audit with:
 
----
+```bash
+npm run audit
+```
 
-## ⚠️ Requirements
+## Project Structure
 
-- Same WiFi network
-- Node.js installed
+```text
+server.js             Express server, upload handling, QR endpoint
+public/index.html     Sender interface
+public/receive.html   Receiver interface
+public/styles.css     Shared visual system
+public/app.js         Shared client behavior
+uploads/              Runtime file storage, ignored by git
+```
 
----
+## License
 
-## 💡 Future Ideas
-
-- 📦 ZIP download (single click)
-- 📊 Upload progress bar
-- 📲 Installable PWA
-- 🔐 Optional secure mode
-
----
-
-## 📜 License
-
-MIT License
-
----
-
-## ⭐ Support
-
-If you like this project:
-
-- Star the repo
-- Share with friends
-- Build something even cooler
-
----
-
-# ⚡ ByteDrop
-
-"Because sending files shouldn’t feel like a task."
-
----
-
-## Screenshots
-
-<img width="479" height="300" alt="image" src="https://github.com/user-attachments/assets/c40acf11-b3b3-4e24-b721-a6f18cb6c85d" />
-
-<img width="1903" height="968" alt="image" src="https://github.com/user-attachments/assets/4d990f17-a559-47ec-9cfe-1730350f500a" />
-
-<img width="412" height="915" alt="image" src="https://github.com/user-attachments/assets/1eb7c241-e924-44da-b80b-5c40fdfc8e13" />
+MIT

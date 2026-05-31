@@ -1,121 +1,33 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ByteDrop</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Receive with ByteDrop</title>
   <link rel="icon" type="image/png" href="/ByteDrop.png">
-
-  <style>
-    body {
-      background: #0f0f0f;
-      color: white;
-      font-family: sans-serif;
-      text-align: center;
-      margin: 0;
-    }
-
-    h3 {
-      margin-top: 20px;
-    }
-
-    #downloadAllBtn {
-      background: #2d8cff;
-      color: #fff;
-      border: 1.5px solid #1a5fd0;
-      padding: 12px;
-      width: 80%;
-      border-radius: 8px;
-      font-size: 16px;
-      margin: 20px;
-    }
-
-    #logo {
-        margin-top: 20px;
-        text-align: center;
-    }
-
-    #logoImg {
-        width: 60%;
-        max-width: 350px;
-        margin-top: 10px;
-    }
-    
-    .file {
-      background: #1a1a1a;
-      margin: 10px auto;
-      padding: 12px;
-      width: 85%;
-      border-radius: 10px;
-      border: 1px solid #333;
-    }
-
-    .file a {
-      color: #4fc3f7;
-      text-decoration: none;
-    }
-  </style>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
 </head>
+<body data-page="receive">
+  <main class="shell mobile-shell">
+    <section class="receive-hero" aria-labelledby="title">
+      <img src="/ByteDrop-logo.png" alt="ByteDrop" class="logo compact">
+      <p class="eyebrow">Ready to receive</p>
+      <h1 id="title">Files from your computer appear here.</h1>
+      <p class="status" id="status" role="status" aria-live="polite">Checking for shared files...</p>
+    </section>
 
-<body>
+    <section class="files-panel" aria-labelledby="filesTitle">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Available now</p>
+          <h2 id="filesTitle">Downloads</h2>
+        </div>
+        <button class="button primary" id="downloadAllBtn" type="button" hidden>Download all</button>
+      </div>
 
-<div id="logo">
-    <img src="/ByteDrop-logo.png" alt="Byte-Drop Logo" id="logoImg"/>
-</div>
-<h3>📥 Available Files</h3>
-
-<button id="downloadAllBtn">Download (0)</button>
-
-<div id="files"></div>
-
-<script>
-const btn = document.getElementById("downloadAllBtn");
-
-function loadFiles() {
-  fetch("/files")
-    .then(res => res.json())
-    .then(files => {
-      const list = document.getElementById("files");
-      const btn = document.getElementById("downloadAllBtn");
-
-      list.innerHTML = "";
-
-      if (files.length === 0) {
-        btn.style.display = "none";
-
-        list.innerHTML = `
-          <div style="margin-top:30px; color:#666; text-align:center;">
-            ⏳ Waiting for files...
-          </div>
-        `;
-        return;
-      }
-
-      btn.style.display = "block";
-      btn.textContent = `Download (${files.length})`;
-
-      files.forEach(f => {
-        list.innerHTML += `
-          <div class="file">
-            <a href="/download/${f}">${f}</a>
-          </div>
-        `;
-      });
-
-      btn.onclick = () => {
-        files.forEach((file, i) => {
-          setTimeout(() => {
-            window.open("/download/" + file, "_blank");
-          }, i * 300);
-        });
-      };
-    });
-}
-
-setInterval(loadFiles, 2000);
-
-loadFiles();
-loadFiles();
-</script>
-
+      <div class="file-list" id="files"></div>
+    </section>
+  </main>
 </body>
 </html>

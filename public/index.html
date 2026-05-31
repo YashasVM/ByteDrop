@@ -1,319 +1,60 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>ByteDrop</title>
   <link rel="icon" type="image/png" href="/ByteDrop.png">
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      background: #0f0f0f;
-      color: #eee;
-      font-family: sans-serif;
-      text-align: center;
-    }
-
-    button {
-        background: #ff3b3b;
-        border: none;
-        color: white; 
-        padding: 6px 10px;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: bold;
-        font-size: 14px;
-    }
-
-    h2 {
-      margin-top: 20px;
-    }
-
-    #qrBox img {
-      margin: 10px;
-      border-radius: 10px;
-    }
-
-    #drop {
-      border: 2px dashed #444;
-      padding: 90px;
-      margin: 20px;
-      border-radius: 12px;
-      background: #1a1a1a;
-      font-size: 18px;
-    }
-
-    #drop {
-      text-align: center;
-    }
-
-    #files {
-      background: #0f0f0f;
-      padding: 20px;
-      border-radius: 12px;
-      margin: 20px;
-    }
-
-    #uploadBtn {
-      background: #2a2a2a;
-      color: #fff;
-      border: 1px solid #555;
-      padding: 10px 18px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-
-    #uploadBtn:hover {
-      background: #3a3a3a;
-    }
-
-    #clearBtn {
-      background: #ff3b3b;
-      color: #fff;
-      border: 1.5px solid #222;
-      padding: 8px 16px;
-      border-radius: 6px;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-    }
-
-    #clearBtn:hover {
-      background: #ff1e1e;
-    }
-
-    #clearBtn {
-      padding: 10px 20px;
-      font-size: 15px;
-    }
-
-    #downloadWrapper {
-      width: 40%;
-      margin: 15px auto;
-      text-align: center;
-    }
-
-    #downloadAllBtn {
-      background: #2d8cff;
-      color: #fff;
-      border: 1.5px solid #1a5fd0;
-      padding: 10px 20px;
-      border-radius: 8px;
-      font-size: 15px;
-      cursor: pointer;
-    }
-
-    a {
-      color: #4fc3f7;
-      display: block;
-      margin: 8px;
-      text-decoration: none;
-    }
-
-    a:hover {
-      text-decoration: underline;
-    }
-
-    .file-card {
-      margin: 6px auto;
-      padding: 15px 20px;
-      width: 40%;
-
-      border: 1.5px solid rgba(255,255,255,0.6);
-      border-radius: 12px;
-
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .file-card span {
-        color: #ffffff;
-        font-size: 20px;
-        cursor: pointer;
-    }
-
-    .file-card span:hover {
-        text-decoration: underline;
-    }
-    
-    .file-card span {
-        max-width: 70%;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-  </style>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
 </head>
-<body>
+<body data-page="send">
+  <main class="shell">
+    <section class="hero" aria-labelledby="title">
+      <div class="brand">
+        <img src="/ByteDrop-logo.png" alt="ByteDrop" class="logo">
+        <p class="eyebrow">Local network handoff</p>
+      </div>
 
-    <img src="/ByteDrop-logo.png" alt="Byte-Drop Logo" width="350"/> 
+      <div class="hero-grid">
+        <div class="intro">
+          <h1 id="title">Drop files across the room.</h1>
+          <p>Share files from this computer to nearby devices on the same Wi-Fi. No cloud storage, no accounts, no public links.</p>
 
-<div id="qrBox"></div>
-<p id="link"></p>
-
-<div id="drop">
-  Drag & Drop Files
-
-  <br><br>
-
-  <button id="uploadBtn">Upload File</button>
-  <input type="file" id="fileInput" multiple hidden>
-</div>
-
-<div style="width: 40%; margin: auto; text-align: right;">
-  <button id="clearBtn">Clear (0)</button>
-</div>
-
-<div id="files"></div>
-
-<div id="downloadWrapper">
-  <button id="downloadAllBtn">Download (0)</button>
-</div>
-
-<script>
-fetch("/qr")
-  .then(res => res.json())
-  .then(data => {
-    document.getElementById("qrBox").innerHTML =
-      `<img src="${data.qr}" width="200"/>`;
-
-    document.getElementById("link").innerText = data.url;
-  });
-
-const drop = document.getElementById("drop");
-
-drop.ondragover = e => e.preventDefault();
-
-drop.ondrop = e => {
-  e.preventDefault();
-  const file = e.dataTransfer.files[0];
-  const form = new FormData();
-  form.append("file", file);
-
-  fetch("/upload", {
-    method: "POST",
-    body: form
-  }).then(loadFiles);
-};
-
-function loadFiles() {
-  fetch("/files")
-    .then(res => res.json())
-    .then(files => {
-      const list = document.getElementById("files");
-      const clearBtn = document.getElementById("clearBtn");
-      const downloadAllBtn = document.getElementById("downloadAllBtn");
-
-      list.innerHTML = "";
-
-      if (files.length === 0) {
-        clearBtn.style.display = "none";
-        downloadAllBtn.style.display = "none";
-      } else {
-        clearBtn.style.display = "inline-block";
-        downloadAllBtn.style.display = "inline-block";
-      }
-
-      clearBtn.textContent = `Clear (${files.length})`;
-      downloadAllBtn.textContent = `Download (${files.length})`;
-
-      files.forEach(f => {
-        list.innerHTML += `
-          <div class="file-card">
-            <span onclick="downloadFile('${f}')">${f}</span>
-            <button class="delete" onclick="deleteFile('${f}')">X</button>
+          <div class="actions">
+            <label class="button primary" for="fileInput">Choose files</label>
+            <button class="button ghost" id="clearBtn" type="button" hidden>Clear queue</button>
           </div>
-        `;
-      });
-    });
-}
 
-window.addEventListener("DOMContentLoaded", () => {
-  const clearBtn = document.getElementById("clearBtn");
+          <input type="file" id="fileInput" multiple hidden>
+          <p class="status" id="status" role="status" aria-live="polite">Ready when you are.</p>
+        </div>
 
-  clearBtn.onclick = () => {
-    fetch("/clear", {
-      method: "DELETE"
-    }).then(loadFiles);
-  };
-});
+        <aside class="qr-panel" aria-label="Phone connection">
+          <div class="qr-frame" id="qrBox"></div>
+          <p class="qr-title">Scan to receive</p>
+          <a class="qr-link" id="link" href="/receive">/receive</a>
+        </aside>
+      </div>
+    </section>
 
-function downloadFile(name) {
-  window.location.href = "/download/" + name;
-}
+    <section class="drop-zone" id="drop" tabindex="0" aria-label="Upload files by dropping them here">
+      <span class="drop-kicker">Drag files here</span>
+      <strong>Release to upload instantly</strong>
+      <small>Uploads stay on this computer until you delete them or stop sharing.</small>
+    </section>
 
-function deleteFile(name) {
-  fetch("/delete/" + name, {
-    method: "DELETE"
-  }).then(loadFiles);
-}
+    <section class="files-panel" aria-labelledby="filesTitle">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Shared now</p>
+          <h2 id="filesTitle">Files</h2>
+        </div>
+        <button class="button secondary" id="downloadAllBtn" type="button" hidden>Download all</button>
+      </div>
 
-setInterval(loadFiles, 2000);
-loadFiles();
-
-window.addEventListener("dragover", e => e.preventDefault());
-
-window.addEventListener("drop", e => {
-  e.preventDefault();
-
-  const files = e.dataTransfer.files;
-  if (!files.length) return;
-
-  Promise.all(
-    Array.from(files).map(file => {
-      const form = new FormData();
-      form.append("file", file);
-
-      return fetch("/upload", {
-        method: "POST",
-        body: form
-      });
-    })
-  ).then(loadFiles);
-});
-
-const uploadBtn = document.getElementById("uploadBtn");
-const fileInput = document.getElementById("fileInput");
-
-uploadBtn.onclick = () => {
-  fileInput.click();
-};
-
-fileInput.onchange = () => {
-  const files = fileInput.files;
-
-  if (!files.length) return;
-
-  for (let i = 0; i < files.length; i++) {
-    const form = new FormData();
-    form.append("file", files[i]);
-
-    fetch("/upload", {
-      method: "POST",
-      body: form
-    }).then(loadFiles);
-  }
-};
-
-const downloadAllBtn = document.getElementById("downloadAllBtn");
-
-downloadAllBtn.onclick = () => {
-  fetch("/files")
-    .then(res => res.json())
-    .then(files => {
-      files.forEach((file, i) => {
-        setTimeout(() => {
-          window.open("/download/" + file, "_blank");
-        }, i * 300);
-      });
-    });
-};
-
-setInterval(loadFiles, 2000);
-
-</script>
-
+      <div class="file-list" id="files"></div>
+    </section>
+  </main>
 </body>
 </html>
