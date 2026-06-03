@@ -1,13 +1,22 @@
 {
   "name": "byte-drop",
   "version": "1.0.0",
+  "description": "Instant local-network file sharing with a QR-powered receive page.",
   "main": "server.js",
   "bin": {
-    "byte-drop": "./server.js"
+    "byte-drop": "server.js"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "audit": "npm audit --omit=dev"
+  },
+  "engines": {
+    "node": ">=18"
   },
   "dependencies": {
     "express": "^5.2.1",
     "multer": "^2.1.1",
     "qrcode": "^1.5.4"
-  }
+  },
+  "license": "MIT"
 }
