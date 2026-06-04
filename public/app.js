@@ -5,6 +5,7 @@ const downloadAllBtn = document.getElementById("downloadAllBtn");
 const clearBtn = document.getElementById("clearBtn");
 const fileInput = document.getElementById("fileInput");
 const drop = document.getElementById("drop");
+let lastFilesSignature = null;
 
 function setStatus(message) {
   if (statusEl) statusEl.textContent = message;
@@ -60,6 +61,10 @@ function renderEmpty() {
   filesEl.replaceChildren(empty);
 }
 
+function getFilesSignature(files) {
+  return files.map(file => `${file.name}:${file.size}:${file.modifiedAt}`).join("|");
+}
+
 function renderFiles(files) {
   const cards = files.map(file => {
     const card = document.createElement("article");
@@ -105,6 +110,7 @@ async function loadFiles() {
 
   const files = await response.json();
   const hasFiles = files.length > 0;
+  const signature = getFilesSignature(files);
 
   if (clearBtn) clearBtn.hidden = !hasFiles;
   if (downloadAllBtn) {
@@ -120,6 +126,9 @@ async function loadFiles() {
   setStatus(hasFiles
     ? `${files.length} file${files.length === 1 ? "" : "s"} ready.`
     : page === "receive" ? "Waiting for shared files..." : "Ready when you are.");
+
+  if (signature === lastFilesSignature) return;
+  lastFilesSignature = signature;
 
   if (hasFiles) renderFiles(files);
   else renderEmpty();

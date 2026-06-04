@@ -10,16 +10,24 @@
 </head>
 <body data-page="send">
   <main class="shell">
-    <section class="hero" aria-labelledby="title">
-      <div class="brand">
-        <img src="/ByteDrop-logo.png" alt="ByteDrop" class="logo">
-        <p class="eyebrow">Local network handoff</p>
+    <nav class="topbar" aria-label="ByteDrop controls">
+      <a class="brand-lockup" href="/">
+        <img src="/ByteDrop.png" alt="" width="64" height="64">
+        <span>ByteDrop</span>
+      </a>
+      <div class="nav-links" aria-label="Sharing status">
+        <span>Local only</span>
+        <span>QR armed</span>
+        <span>No cloud</span>
       </div>
+    </nav>
 
+    <section class="hero" aria-labelledby="title">
       <div class="hero-grid">
         <div class="intro">
-          <h1 id="title">Drop files across the room.</h1>
-          <p>Share files from this computer to nearby devices on the same Wi-Fi. No cloud storage, no accounts, no public links.</p>
+          <p class="eyebrow">LAN file drop / instant relay</p>
+          <h1 id="title">Throw files across the room.</h1>
+          <p class="lede">A hard-edged local transfer board for moving files from this computer to nearby devices on the same Wi-Fi. No accounts. No cloud storage. No public links.</p>
 
           <div class="actions">
             <label class="button primary" for="fileInput">Choose files</label>
@@ -31,6 +39,7 @@
         </div>
 
         <aside class="qr-panel" aria-label="Phone connection">
+          <div class="panel-label">Receiver gate</div>
           <div class="qr-frame" id="qrBox"></div>
           <p class="qr-title">Scan to receive</p>
           <a class="qr-link" id="link" href="/receive">/receive</a>
@@ -39,8 +48,8 @@
     </section>
 
     <section class="drop-zone" id="drop" tabindex="0" aria-label="Upload files by dropping them here">
-      <span class="drop-kicker">Drag files here</span>
-      <strong>Release to upload instantly</strong>
+      <span class="drop-kicker">Drop bay</span>
+      <strong>Release files here.</strong>
       <small>Uploads stay on this computer until you delete them or stop sharing.</small>
     </section>
 

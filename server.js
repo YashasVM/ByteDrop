@@ -35,6 +35,11 @@ app.use(express.static(PUBLIC_DIR, {
   etag: true,
   index: "index.html",
   maxAge: "1h",
+  setHeaders: (res, filePath) => {
+    if (/\.(?:png|ico|jpg|jpeg|webp)$/i.test(filePath)) {
+      res.setHeader("Cache-Control", "public, max-age=604800, immutable");
+    }
+  },
 }));
 
 function sanitizeOriginalName(name) {
